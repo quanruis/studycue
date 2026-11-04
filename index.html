@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudyCue</title>
+<link rel="icon" href="assets/butterfly.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+<!-- Laptop-only gate -->
+<div id="gateLaptop" class="gate" hidden>
+  <img src="assets/logo_pill.png" alt="StudyCue" width="260">
+  <h2>StudyCue is only available on laptop</h2>
+  <p>Open this page on a laptop or desktop computer with a webcam.</p>
+</div>
+
+<div id="viewport">
+<div id="stage">
+  <img class="abs" id="bg" src="assets/bg.jpg" alt="" draggable="false">
+
+  <!-- ============ LEFT: CAMERA FEED ============ -->
+  <img class="abs" id="camTitle" src="assets/camerafeed.png" alt="Camera Feed" draggable="false">
+  <div class="abs" id="stars" aria-hidden="true">
+    <svg width="0" height="0"><defs>
+      <linearGradient id="starG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3a0"/><stop offset=".55" stop-color="#ffd23a"/><stop offset="1" stop-color="#f4a912"/></linearGradient>
+      <symbol id="star" viewBox="0 0 24 24"><path d="M12 1.8l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.1l7.1-.7z" fill="url(#starG)" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke"/></symbol>
+    </defs></svg>
+    <svg class="st"><use href="#star"/></svg><svg class="st"><use href="#star"/></svg><svg class="st"><use href="#star"/></svg><svg class="st"><use href="#star"/></svg><svg class="st"><use href="#star"/></svg>
+  </div>
+  <div class="abs poppins" id="detCount">phone detections: <span id="detNum">0</span></div>
+
+  <div class="abs" id="camBox">
+    <div id="camPlaceholder" aria-hidden="true">
+      <i class="cloud c1"></i><i class="cloud c2"></i><i class="hill h1"></i><i class="hill h2"></i>
+    </div>
+    <video id="camVideo" playsinline muted autoplay></video>
+    <canvas id="camCanvas"></canvas>
+    <div id="camBadge"><i></i><span id="camBadgeText">camera starting…</span></div>
+    <div id="phoneAlert">Phone detected!</div>
+  </div>
+
+  <button class="abs ico" id="icoStart" aria-label="Start Detection" data-for="btnStart"><img src="assets/heart.png" alt=""></button>
+  <button class="abs ico" id="icoReset" aria-label="Reset Count" data-for="btnReset"><img src="assets/melody.png" alt=""></button>
+  <button class="abs ico" id="icoEnd" aria-label="End Session" data-for="btnEnd"><img src="assets/note.png" alt=""></button>
+  <button class="abs bubble dmsans" id="btnStart">Start Detection</button>
+  <button class="abs bubble dmsans" id="btnReset">Reset Count</button>
+  <button class="abs bubble dmsans" id="btnEnd">End Session</button>
+
+  <!-- ============ RIGHT: PHONE ============ -->
+  <div class="abs" id="phoneWrap">
+    <img id="phoneImg" src="assets/phone.png" alt="" draggable="false">
+    <button id="phoneBack" class="hot" aria-label="Back" title="Back"></button>
+    <button id="phoneHome" class="hot" aria-label="Home" title="Home"></button>
+    <button id="phoneButterfly" class="hot" aria-label="Home" title="Home"></button>
+  </div>
+
+  <div class="abs" id="screen">
+    <!-- HOME VIEW -->
+    <div id="homeView">
+      <div class="statusbar small"><span class="sbicons"></span></div>
+      <div id="homeGrid">
+        <button class="app" data-app="clock"><img src="assets/clock.png" alt=""><span>clock</span></button>
+        <button class="app" data-app="notes"><img src="assets/notes.png" alt=""><span>notes</span></button>
+        <button class="app" data-app="settings"><img src="assets/settings.png" alt=""><span>settings</span></button>
+        <button class="app" data-app="calc"><img src="assets/calc.png" alt=""><span>calculator</span></button>
+        <button class="app" data-app="features"><img src="assets/features.png" alt=""><span>features</span></button>
+        <button class="app" data-app="ai"><img src="assets/studyai.png" alt=""><span>StudyAI</span></button>
+      </div>
+    </div>
+
+    <!-- APP VIEW -->
+    <div id="appView">
+      <div class="statusbar big">
+        <button id="appBack" class="backpill poppins" aria-label="Back to apps">&#8592; apps</button>
+        <span class="sbicons"></span>
+      </div>
+
+      <!-- CLOCK -->
+      <section class="page" id="page-clock" hidden>
+        <img class="pico" style="left:26px;top:74px;width:52px" src="assets/clock.png" alt="">
+        <div class="hw" id="curLabel">current time:</div>
+        <div id="curTime">--:--</div>
+        <img id="panelImg" src="assets/panel.png" alt="" draggable="false">
+        <div id="pdMin" class="hw pd">45</div><div class="hw pu" id="puM">m</div>
+        <div id="pdSec" class="hw pd">00</div><div class="hw pu" id="puS">s</div>
+        <div class="hw" id="pCount">0/4</div>
+        <div id="pBar"><i id="pFill"></i><span class="hw" id="pTotal">45 min total</span></div>
+        <button class="hw" id="pEdit">edit</button>
+        <div id="pSeg">
+          <i id="pSegThumb"></i>
+          <button class="hw" data-mode="pomodoro">pomodoro</button>
+          <button class="hw" data-mode="short">short break</button>
+          <button class="hw" data-mode="long">long break</button>
+        </div>
+        <button class="pbtn" id="pStop" aria-label="Stop"><svg viewBox="0 0 20 20"><rect x="4" y="4" width="12" height="12" rx="1"/></svg></button>
+        <button class="pbtn" id="pPlay" aria-label="Start"><svg viewBox="0 0 20 20" id="pPlayIcon"><path d="M6 3.5v13l11-6.5z"/></svg></button>
+        <button class="pbtn hw" id="pReset" aria-label="Reset">reset</button>
+      </section>
+
+      <!-- NOTES -->
+      <section class="page" id="page-notes" hidden>
+        <div id="notesList">
+          <img class="pico" style="left:26px;top:72px;width:50px" src="assets/notes.png" alt="">
+          <h1 class="hw" style="left:95px;top:70px">my notebooks</h1>
+          <button class="hw pillbtn" id="newNb" style="left:37px;top:135px;width:169px;height:37px">+&nbsp; new notebook</button>
+          <div id="nbGrid"></div>
+        </div>
+        <div id="notebookView" hidden>
+          <button class="hw pillbtn" id="nbBack" style="left:22px;top:66px;width:132px;height:34px;font-size:17px">&#8592; notebooks</button>
+          <button class="hw pillbtn danger" id="nbDelete" style="right:22px;top:66px;width:112px;height:34px;font-size:17px">delete</button>
+          <div id="nbBanner"></div>
+          <input id="nbTitleInput" class="hw" maxlength="60" aria-label="Notebook title">
+          <div id="nbMeta" class="hw"></div>
+          <textarea id="nbText" class="hw" placeholder="Write your notes here…" aria-label="Notes"></textarea>
+          <div id="nbFilesHead" class="hw"><span>sources</span><button class="hw pillbtn" id="nbAddFile">+ add file</button></div>
+          <div id="nbFiles"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings" hidden>
+        <img class="pico" style="left:20px;top:66px;width:56px" src="assets/settings.png" alt="">
+        <p class="hw" id="setPara">StudyCue was carefully curated under the supervision of 4 students and with the support of SMAK 7 BPK Penabur Jakarta through allowing us to express our creativity from the IT project program.</p>
+        <div class="hw" id="setNames"><span>Calista Rahel Haryono</span><span>Gia Faith Senggono</span><span>Oswald Noah Surya Halim</span><span>Benny Raja Sihite</span></div>
+        <h2 class="hw bigh" style="left:16px;top:183px">contacts</h2>
+        <a class="hw srow" style="top:241px" href="https://bpkpenabur.or.id/smak-7-penabur-jakarta" target="_blank" rel="noopener"><img src="assets/school.png" alt="">SMAK 7 BPK Penabur Jakarta</a>
+        <a class="hw srow" style="top:317px" href="mailto:calista.012603528@bpkpenabur.sch.id" title="calista.012603528@bpkpenabur.sch.id"><img src="assets/mail.png" alt="">Gmail</a>
+        <h2 class="hw bigh" style="left:22px;top:411px">about</h2>
+        <div class="hw srow" id="appVersion" style="top:470px" tabindex="0"><img src="assets/butterfly.png" alt="">App Version<span class="tip hw">version 1.1</span></div>
+        <button class="hw srow" id="aboutBtn" style="top:545px"><img src="assets/logo.png" alt="">About StudyCue</button>
+      </section>
+
+      <!-- CALCULATOR -->
+      <section class="page" id="page-calc" hidden>
+        <img class="pico" style="left:22px;top:65px;width:41px" src="assets/calc.png" alt="">
+        <div id="calcBody">
+          <div id="calcDisplay"><div id="calcExpr"></div><div id="calcMain">0</div>
+            <button class="cmini" id="cClear" aria-label="Clear">C</button><button class="cmini" id="cBack" aria-label="Backspace">&#9003;</button></div>
+        </div>
+        <div id="calcKeys"></div>
+      </section>
+
+      <!-- FEATURES -->
+      <section class="page" id="page-features" hidden>
+        <img class="pico" style="left:22px;top:66px;width:56px" src="assets/features.png" alt="">
+        <h1 class="hw" style="left:96px;top:70px">features</h1>
+        <button class="hw srow" style="top:150px" data-app="calendar"><img src="assets/calendar.png" alt="">Calendar</button>
+        <button class="hw srow" style="top:226px" id="featStats"><img src="assets/heart.png" alt="">Study stats</button>
+        <button class="hw srow" style="top:302px" data-app="ai"><img src="assets/studyai.png" alt="">StudyAI</button>
+        <div id="statsCard" class="hw" hidden></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="page" id="page-calendar" hidden>
+        <img class="pico" style="left:22px;top:68px;width:50px" src="assets/calendar.png" alt="">
+        <div class="hw" id="calMonth">November</div>
+        <button class="calnav hw" id="calPrev" aria-label="Previous month">&#8249;</button>
+        <button class="calnav hw" id="calNext" aria-label="Next month">&#8250;</button>
+        <div class="hw" id="calYear">2026</div>
+        <div id="calDow"><span class="hw">mon</span><span class="hw">tue</span><span class="hw">wed</span><span class="hw">thu</span><span class="hw">fri</span><span class="hw">sat</span><span class="hw">sun</span></div>
+        <div id="calGrid"></div>
+        <button class="hw pillbtn" id="addEvent" style="left:18px;top:702px;width:128px;height:39px">+&nbsp; event</button>
+      </section>
+
+      <!-- STUDYAI -->
+      <section class="page" id="page-ai" hidden>
+        <img class="pico" style="left:24px;top:67px;width:49px" src="assets/studyai.png" alt="">
+        <h1 class="hw" style="left:108px;top:70px">StudyAI</h1>
+        <button class="hw pillbtn" id="aiKeyBtn" style="right:26px;top:80px;height:28px;padding:0 14px;font-size:14px">API key</button>
+        <div id="aiChat" aria-live="polite"></div>
+        <div id="aiQuiz" hidden></div>
+        <div id="aiBar">
+          <button class="hw aibtn" id="aiUpload"><img src="assets/folder.png" alt="">upload file</button>
+          <button class="hw aibtn" id="aiFlash"><img src="assets/melody.png" alt="">flashcards</button>
+          <span id="aiFileChip" class="hw" hidden></span>
+        </div>
+        <input id="aiInput" class="hw" placeholder="Ask StudyAI for a summary" autocomplete="off" aria-label="Ask StudyAI">
+      </section>
+    </div>
+
+    <!-- Break notification -->
+    <div id="notif" hidden>
+      <img src="assets/notif.png" alt="">
+      <div class="poppins" id="notifText">Lets take a break for 5 minutes!</div>
+      <button class="nbtn poppins" id="nNo"><img src="assets/btn_blue.png" alt=""><span>no thanks</span></button>
+      <button class="nbtn poppins" id="nYes"><img src="assets/btn_blue.png" alt=""><span>alright</span></button>
+    </div>
+  </div>
+
+  <!-- Keychain countdown -->
+  <div class="abs" id="keychain" title="Study countdown">
+    <img src="assets/keychain.png" alt="" draggable="false">
+    <div id="kcWin" class="poppins"><b id="kcTime">45:00</b><small id="kcLbl">next break</small><small id="kcNext">--:--</small></div>
+  </div>
+
+  <a class="abs" id="logoPill" href="#" aria-label="StudyCue"><img src="assets/logo_pill.png" alt="StudyCue"></a>
+
+  <!-- Modal + toast layer -->
+  <div id="modalLayer" hidden><div id="modal" role="dialog" aria-modal="true"></div></div>
+  <div id="toast" hidden></div>
+
+  <!-- Camera permission wall -->
+  <div id="camGate" class="gate stagegate" hidden>
+    <img src="assets/logo_pill.png" alt="StudyCue" width="260">
+    <h2 id="camGateTitle">StudyCue needs your camera</h2>
+    <p id="camGateMsg">StudyCue watches the camera feed to notice when you pick up your phone. Please allow camera access to use the site.</p>
+    <button class="bubble dmsans static" id="camRetry">Allow camera</button>
+  </div>
+</div>
+</div>
+
+<input type="file" id="fileAI" accept=".pdf,.txt,.md,.csv,.html,.json,image/png,image/jpeg,image/webp" hidden>
+<input type="file" id="fileNbBanner" accept="image/*" hidden>
+<input type="file" id="fileNbFiles" multiple hidden>
+<input type="file" id="fileNbMore" multiple hidden>
+
+<script src="app.js"></script>
+</body>
+</html>
